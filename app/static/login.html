@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in · MeetPilot</title>
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/auth.css">
+</head>
+<body>
+<main class="auth">
+
+  <section class="stage" aria-label="What MeetPilot does">
+    <div class="brand"><img src="/static/favicon.svg" alt="" width="38" height="38">MeetPilot</div>
+    <h1>Your meetings, <span>handled.</span></h1>
+    <p class="lede">An AI agent reads your mail, plans the trip and gets everything ready. You stay in charge and approve every real action.</p>
+
+    <div class="run" aria-hidden="true">
+      <div class="run-head"><span class="who"></span>MeetPilot is working…<small>agent run</small></div>
+      <ol class="run-steps"></ol>
+      <div class="run-actions"><span class="fake-btn go">Approve</span><span class="fake-btn">Not now</span></div>
+    </div>
+
+    <ul class="promises">
+      <li>Nothing is booked, paid or sent until you confirm.</li>
+      <li>Passwords are stored as salted hashes, never in plain text.</li>
+      <li>This copy runs on your own computer.</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <div class="card">
+      <h2>Welcome back</h2>
+      <p class="sub">Sign in to continue with your meetings.</p>
+
+      <form data-auth="login" novalidate>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" autocapitalize="off" spellcheck="false" aria-describedby="error">
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="pw">
+            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Your password" aria-describedby="error">
+            <button type="button" data-toggle-password="password" aria-pressed="false" aria-label="Show or hide the password">Show</button>
+          </div>
+        </div>
+
+        <div class="error" id="error" role="alert" hidden></div>
+
+        <button class="submit" id="submit" type="submit">Sign in</button>
+      </form>
+
+      <p class="switch">New to MeetPilot? <a href="/register">Create an account</a></p>
+    </div>
+  </section>
+
+</main>
+<script src="/static/auth.js"></script>
+</body>
+</html>

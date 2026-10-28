@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create your account · MeetPilot</title>
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/auth.css">
+</head>
+<body>
+<main class="auth">
+
+  <section class="stage" aria-label="What MeetPilot does">
+    <div class="brand"><img src="/static/favicon.svg" alt="" width="38" height="38">MeetPilot</div>
+    <h1>Meet your <span>meeting agent.</span></h1>
+    <p class="lede">Create an account, and MeetPilot turns a meeting email into a trip plan: the route, a stay if it's worth it, hotels within your budget, and a calendar event.</p>
+
+    <div class="run" aria-hidden="true">
+      <div class="run-head"><span class="who"></span>MeetPilot is working…<small>agent run</small></div>
+      <ol class="run-steps"></ol>
+      <div class="run-actions"><span class="fake-btn go">Approve</span><span class="fake-btn">Not now</span></div>
+    </div>
+
+    <ul class="promises">
+      <li>Nothing is booked, paid or sent until you confirm.</li>
+      <li>Passwords are stored as salted hashes, never in plain text.</li>
+      <li>This copy runs on your own computer.</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <div class="card">
+      <h2>Create your account</h2>
+      <p class="sub">It takes a minute. You'll connect Gmail later, only if you want to.</p>
+
+      <form data-auth="register" novalidate>
+        <div class="field">
+          <label for="name">Name <span style="font-weight:500">(optional)</span></label>
+          <input id="name" name="name" type="text" autocomplete="name" placeholder="How should I address you?" maxlength="80">
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" autocapitalize="off" spellcheck="false" aria-describedby="error">
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="pw">
+            <input id="password" name="password" type="password" autocomplete="new-password" placeholder="12 or more characters" aria-describedby="password-hint error">
+            <button type="button" data-toggle-password="password" aria-pressed="false" aria-label="Show or hide the password">Show</button>
+          </div>
+          <div class="meter" data-level="0" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <div class="hint" id="password-hint" aria-live="polite"></div>
+        </div>
+
+        <div class="error" id="error" role="alert" hidden></div>
+
+        <button class="submit" id="submit" type="submit">Create account</button>
+      </form>
+
+      <p class="switch">Already have an account? <a href="/login">Sign in</a></p>
+      <p class="fineprint">Forgot-password isn't available in this version. Keep your password safe.</p>
+    </div>
+  </section>
+
+</main>
+<script src="/static/auth.js"></script>
+</body>
+</html>

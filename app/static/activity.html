@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent activity · MeetPilot</title>
+<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f2f5fb;
+    --panel: rgba(255, 255, 255, .78);
+    --solid: #ffffff;
+    --soft: #f6f8fd;
+    --border: rgba(24, 44, 96, .11);
+    --text: #0f1b3d;
+    --muted: #5d6b8a;
+    --accent: #6a5cff;
+    --grad: linear-gradient(135deg, #5b6bff 0%, #7a5cff 50%, #19c5d1 100%);
+    --ok: #0f9d6e;
+    --warn: #b86e00;
+    --bad: #d03f3f;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+    --shadow: 0 10px 30px rgba(24, 44, 96, .10);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100dvh; color: var(--text);
+    background:
+      radial-gradient(900px 500px at 8% -10%, rgba(122, 92, 255, .16), transparent 60%),
+      radial-gradient(800px 500px at 100% 0%, rgba(25, 197, 209, .14), transparent 55%),
+      var(--bg);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  button, a { font: inherit; }
+  button { cursor: pointer; color: inherit; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+
+  .top {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 22px; height: 56px;
+    background: rgba(255, 255, 255, .82); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 750; font-size: 16.5px; letter-spacing: -.01em; text-decoration: none; color: inherit; }
+  .brand img { width: 28px; height: 28px; border-radius: 8px; display: block; }
+  .brand small { font-size: 12px; font-weight: 600; color: var(--muted); padding: 3px 9px; border-radius: 999px; background: var(--soft); border: 1px solid var(--border); }
+  .actions { display: flex; gap: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 10px; text-decoration: none; white-space: nowrap;
+    font-size: 13px; font-weight: 600; color: var(--muted); background: var(--solid); border: 1px solid var(--border);
+  }
+  .chip:hover { color: var(--text); background: var(--soft); border-color: rgba(24, 44, 96, .25); }
+
+  main { max-width: 900px; margin: 0 auto; padding: 22px 22px 48px; }
+  h1 { margin: 0 0 4px; font-size: 24px; letter-spacing: -.02em; }
+  .lede { margin: 0 0 18px; color: var(--muted); font-size: 14.5px; }
+
+  .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 22px; }
+  .tile { padding: 13px 15px; background: var(--solid); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 2px 10px rgba(24, 44, 96, .05); }
+  .tile span { display: block; font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .tile b { display: block; margin-top: 3px; font-size: 22px; letter-spacing: -.02em; }
+
+  .bar { display: flex; align-items: center; justify-content: space-between; margin: 0 0 12px; font-size: 13px; color: var(--muted); }
+
+  .run { position: relative; margin: 0 0 14px; padding: 13px 15px 13px 18px; background: var(--solid); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 2px 10px rgba(24, 44, 96, .05); }
+  .run::before { content: ""; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px; border-radius: 3px; background: var(--grad); }
+  .run-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .run-title { font-weight: 700; word-break: break-word; }
+  .run-time { flex: none; font-size: 12px; color: var(--muted); font-family: var(--mono); white-space: nowrap; }
+  .kind { display: inline-block; margin-top: 4px; font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: var(--soft); color: var(--muted); }
+  .kind.event { background: rgba(25, 197, 209, .15); color: #0e8f99; }
+  .kind.resume { background: rgba(184, 110, 0, .12); color: var(--warn); }
+  .steps { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+  .step { display: flex; align-items: baseline; gap: 8px; font-size: 13px; }
+  .step.sub { margin-left: 14px; }
+  .tag { flex: none; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: var(--soft); color: var(--muted); }
+  .tag.main { background: rgba(106, 92, 255, .12); color: var(--accent); }
+  .tag.gmail { background: rgba(25, 197, 209, .15); color: #0e8f99; }
+  .tag.booking { background: rgba(15, 157, 110, .13); color: var(--ok); }
+  .step code { font-family: var(--mono); font-size: 12px; word-break: break-all; }
+  .nosteps { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
+  .stats { margin-top: 10px; padding-top: 9px; border-top: 1px dashed var(--border); font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+  .empty, .problem { padding: 22px; text-align: center; color: var(--muted); background: var(--solid); border: 1px dashed var(--border); border-radius: 14px; line-height: 1.55; }
+  .problem { color: var(--bad); border-color: rgba(208, 63, 63, .35); background: #fff1f1; }
+
+  @media (max-width: 640px) {
+    .top { padding: 0 12px; }
+    .brand small { display: none; }
+    main { padding: 16px 12px 40px; }
+    .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .run-head { flex-direction: column; gap: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/"><img src="/static/favicon.svg" alt="" width="28" height="28"><span>MeetPilot</span><small>Agent activity</small></a>
+  <div class="actions">
+    <button class="chip" id="refresh" type="button">&#8635; Refresh</button>
+    <a class="chip" href="/">&larr; Back to chat</a>
+  </div>
+</header>
+
+<main>
+  <h1>Agent activity</h1>
+  <p class="lede">What MeetPilot and its Gmail and Booking agents did for you, run by run, with the Gemini calls and cost.</p>
+
+  <section class="tiles" aria-label="Totals">
+    <div class="tile"><span>Runs</span><b id="t-runs">–</b></div>
+    <div class="tile"><span>Gemini calls</span><b id="t-calls">–</b></div>
+    <div class="tile"><span>Tokens</span><b id="t-tokens">–</b></div>
+    <div class="tile"><span>Cost</span><b id="t-cost">–</b></div>
+  </section>
+
+  <div class="bar"><span id="shown"></span><span id="updated"></span></div>
+  <div id="list"></div>
+  <p class="problem" id="problem" hidden></p>
+</main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  const KINDS = { message: "Message", resume: "Answer", event: "New email" };
+
+  function when(iso) {
+    const d = new Date(iso);
+    const seconds = Math.round((Date.now() - d.getTime()) / 1000);
+    const ago = seconds < 60 ? "just now" : seconds < 3600 ? Math.round(seconds / 60) + " min ago" : seconds < 86400 ? Math.round(seconds / 3600) + " h ago" : d.toLocaleDateString();
+    return ago + " · " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function rupees(value) {
+    return "₹" + Number(value).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: value < 1 ? 4 : 2 });
+  }
+
+  function runCard(run) {
+    const card = el("article", "run");
+    const head = el("div", "run-head");
+    const left = el("div");
+    left.appendChild(el("div", "run-title", run.label));
+    left.appendChild(el("span", "kind " + run.kind, KINDS[run.kind] || run.kind));
+    head.append(left, el("span", "run-time", when(run.created_at)));
+    card.appendChild(head);
+
+    if (run.steps.length) {
+      const list = el("ul", "steps");
+      run.steps.forEach((s) => {
+        const kind = s.agent === "MeetPilot" ? "main" : s.agent === "Gmail agent" ? "gmail" : "booking";
+        const row = el("li", "step" + (kind === "main" ? "" : " sub"));
+        row.appendChild(el("span", "tag " + kind, s.agent));
+        row.appendChild(el("code", "", s.label));
+        list.appendChild(row);
+      });
+      card.appendChild(list);
+    } else {
+      card.appendChild(el("p", "nosteps", "Answered directly: no tools were needed."));
+    }
+
+    card.appendChild(el("div", "stats",
+      run.calls + " Gemini call" + (run.calls === 1 ? "" : "s") + " · " + run.tokens.toLocaleString() + " tokens · " + run.seconds + "s · " + rupees(run.cost_inr)));
+    return card;
+  }
+
+  async function load() {
+    $("problem").hidden = true;
+
+    try {
+      const res = await fetch("/api/activity?limit=50", { credentials: "same-origin" });
+      if (res.status === 401) { window.location.href = "/login"; return; }
+      if (!res.ok) throw new Error("The server answered " + res.status + ". If you just updated MeetPilot, run migration 005 in data/db_details.sql.");
+
+      const data = await res.json();
+      $("t-runs").textContent = data.totals.runs.toLocaleString();
+      $("t-calls").textContent = Number(data.totals.calls).toLocaleString();
+      $("t-tokens").textContent = Number(data.totals.tokens).toLocaleString();
+      $("t-cost").textContent = rupees(data.totals.cost_inr);
+
+      const list = $("list");
+      list.replaceChildren();
+
+      if (!data.runs.length) {
+        list.appendChild(el("p", "empty", "Nothing yet. Ask MeetPilot something in the chat and each step it takes shows up here."));
+      } else {
+        data.runs.forEach((run) => list.appendChild(runCard(run)));
+      }
+
+      $("shown").textContent = data.runs.length < data.totals.runs ? "Showing the latest " + data.runs.length + " of " + data.totals.runs + " runs" : data.totals.runs + " run" + (data.totals.runs === 1 ? "" : "s");
+      $("updated").textContent = "Updated " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    } catch (e) {
+      $("problem").textContent = "Could not load the activity. " + e.message;
+      $("problem").hidden = false;
+    }
+  }
+
+  $("refresh").addEventListener("click", load);
+  load();
+  setInterval(() => { if (!document.hidden) load(); }, 15000);      // keeps itself fresh while the tab is open
+</script>
+</body>
+</html>
